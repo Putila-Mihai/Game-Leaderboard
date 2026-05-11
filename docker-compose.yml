@@ -1,0 +1,57 @@
+name: leaderboard-service
+
+networks:
+  redpanda_network:
+    driver: bridge
+
+volumes:
+  redpanda-0: null
+
+services:
+  redpanda-0:
+    image: docker.redpanda.com/redpandadata/redpanda:v26.1.7
+    container_name: redpanda-0
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda-0:9092,external://localhost:19092
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      - --mode dev-container
+      - --smp 1
+      - --default-log-level=info
+    volumes:
+      - redpanda-0:/var/lib/redpanda/data
+    networks:
+      - redpanda_network
+    ports:
+      - 19092:19092
+      - 18081:18081
+
+  console:
+    image: docker.redpanda.com/redpandadata/console:v3.7.2
+    container_name: redpanda-console
+    networks:
+      - redpanda_network
+    entrypoint: /bin/sh
+    command: -c 'echo "$$CONSOLE_CONFIG_FILE" > /tmp/config.yml; /app/console'
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda-0:9092"]
+        schemaRegistry:
+          enabled: true
+          urls: ["http://redpanda-0:8081"]
+    ports:
+      - 8080:8080
+    depends_on:
+      - redpanda-0
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - redpanda_network
+    ports:
+      - 6379:6379
