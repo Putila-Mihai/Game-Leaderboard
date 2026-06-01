@@ -83,7 +83,7 @@ function PlayerCard({ player, rank }: { player: Player; rank: number }) {
             <div
               className="relative flex items-center justify-center w-14 h-14 rounded-md font-mono text-2xl font-black"
               style={{
-                background: `linear-gradient(135deg, ${style.border}22, ${style.border}11)`,
+                backgroundImage: `linear-gradient(135deg, ${style.border}22, ${style.border}11)`,
                 border: `2px solid ${style.border}`,
                 color: style.text,
                 textShadow: isTopThree
@@ -112,7 +112,7 @@ function PlayerCard({ player, rank }: { player: Player; rank: number }) {
             <div
               className="w-0.5 h-10 rounded-full"
               style={{
-                background: `linear-gradient(180deg, transparent, ${style.border}, transparent)`,
+                backgroundImage: `linear-gradient(180deg, transparent, ${style.border}, transparent)`,
               }}
             />
 
@@ -150,7 +150,7 @@ function PlayerCard({ player, rank }: { player: Player; rank: number }) {
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: `linear-gradient(90deg, transparent, ${style.border}33, transparent)`,
+              backgroundImage: `linear-gradient(90deg, transparent, ${style.border}33, transparent)`,
               backgroundSize: "200% 100%",
               animation: "sweep 3s linear infinite",
             }}
@@ -207,7 +207,7 @@ export default function Leaderboard() {
         <div
           className="w-full h-full"
           style={{
-            background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)",
+            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)",
           }}
         />
       </div>
@@ -216,7 +216,7 @@ export default function Leaderboard() {
       <div
         className="fixed inset-0 pointer-events-none z-40"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%)",
+          backgroundImage: "radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%)",
         }}
       />
 
@@ -246,7 +246,7 @@ export default function Leaderboard() {
         <div
           className="w-full max-w-2xl rounded-xl p-4 md:p-6"
           style={{
-            background: "linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(10,0,5,0.85) 50%, rgba(0,0,0,0.8) 100%)",
+            backgroundImage: "linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(10,0,5,0.85) 50%, rgba(0,0,0,0.8) 100%)",
             backdropFilter: "blur(20px)",
             border: "1px solid rgba(255, 10, 60, 0.2)",
             boxShadow: "0 0 60px rgba(255, 10, 60, 0.15), inset 0 0 80px rgba(0,0,0,0.5)",
