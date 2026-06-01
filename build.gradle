@@ -1,7 +1,12 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.diffplug.spotless' version "8.4.0"
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
+    id "org.openapi.generator" version "7.1.0"
 }
 
 group = 'personal'
@@ -15,14 +20,29 @@ java {
 
 repositories {
 	mavenCentral()
+    maven {url = 'https://packages.confluent.io/maven/' }
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	implementation 'org.apache.kafka:kafka-streams'
+
+    //Redis
     implementation("org.springframework.data:spring-data-redis:4.0.2")
+    implementation 'io.lettuce:lettuce-core'
+
+    //Avro
+    implementation("org.apache.avro:avro:1.12.1")
+
+    //Kafka
+    implementation 'org.springframework.boot:spring-boot-starter-kafka'
+    implementation 'org.apache.kafka:kafka-streams'
+    implementation 'io.confluent:kafka-avro-serializer:7.6.0'
+
+    // OpenAPI
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3"
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.10'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.15'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -35,6 +55,47 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
+
+tasks.register('generateApi', GenerateTask) {
+    generatorName = "spring"
+    inputSpec = "$projectDir/src/main/resources/api.yml".toString()
+    outputDir = layout.buildDirectory.dir('openapi').get().toString()
+    apiPackage = "com.leaderboard.external.generated.web.rest"
+    modelPackage = "com.leaderboard.external.generated.model"
+    apiFilesConstrainedTo = [""]
+    modelFilesConstrainedTo = [""]
+    supportingFilesConstrainedTo = ["ApiUtil.java"]
+    configOptions = [
+            title                  : "external",
+            interfaceOnly          : "true",
+            library                : "spring-boot",
+            hideGenerationTimestamp: "true",
+            useTags                : "true",
+            useJakartaEe           : "true",
+            useBeanValidation      : "true"
+    ]
+    typeMappings = [
+            OffsetDateTime: "java.time.OffsetDateTime",
+            Double        : "java.math.BigDecimal",
+            Integer       : "java.math.BigInteger"
+    ]
+    importMappings = [
+            Pageable: "org.springframework.data.domain.Pageable"
+    ]
+    validateSpec = true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir file("${project.buildDir.path}/openapi/src/main/java")
+        }
+    }
+}
+
+
+tasks.compileJava.dependsOn(tasks.spotlessApply, tasks.generateApi)
+defaultTasks("clean", "bootRun")
 
 tasks.named('test') {
 	useJUnitPlatform()

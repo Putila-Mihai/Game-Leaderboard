@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "namespace": "leaderboard",
+  "name": "PlayerScoreEvent",
+  "fields": [
+    { "name": "playerId", "type": ["null", "string"], "default": null },
+    { "name": "gameId", "type": ["null", "string"], "default": null },
+    { "name": "score", "type": ["null", "long"], "default": null },
+    { "name": "createdDate", "type": ["null", "long"], "default": null }
+  ]
+}

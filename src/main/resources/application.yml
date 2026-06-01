@@ -5,7 +5,21 @@ spring:
     bootstrap-servers: localhost:19092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    consumer:
+      group-id: leaderboard-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      enable-auto-commit: false
+    properties:
+      schema.registry.url: http://localhost:18081
+      specific.avro.reader: true
+      auto.register.schemas: true
+    listener:
+      ack-mode: manual_immediate
+    topics:
+      raw-scores: leaderboard.raw-scores
   data:
     redis:
       host: localhost
