@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface Player {
-  id: number
-  name: string
+  rank: number
+  playerId: string
   score: number
 }
 
@@ -21,27 +21,6 @@ const RANK_STYLES = [
   { bg: "from-zinc-900/95 via-zinc-800/90 to-zinc-900/95", border: "#3f3f46", glow: "rgba(63, 63, 70, 0.15)", text: "#52525b" },
   { bg: "from-neutral-900/95 via-neutral-850/90 to-neutral-900/95", border: "#262626", glow: "rgba(38, 38, 38, 0.1)", text: "#404040" },
 ]
-
-const PLAYER_NAMES = [
-  "REAPER_X",
-  "N30N_HUNT3R",
-  "CYB3R_W0LF",
-  "GHOST_PR0T0C0L",
-  "BLAD3_RUNN3R",
-  "SYST3M_SH0CK",
-  "D4RK_SYNTH",
-  "V0ID_W4LK3R",
-  "N1GHT_C1TY",
-  "R3D_QU33N",
-]
-
-function generatePlayers(): Player[] {
-  return PLAYER_NAMES.map((name, i) => ({
-    id: i + 1,
-    name,
-    score: Math.floor(Math.random() * 50000) + 10000,
-  })).sort((a, b) => b.score - a.score)
-}
 
 function PlayerCard({ player, rank }: { player: Player; rank: number }) {
   const style = RANK_STYLES[rank - 1] || RANK_STYLES[9]
@@ -146,10 +125,10 @@ function PlayerCard({ player, rank }: { player: Player; rank: number }) {
                   textShadow: isTopThree ? `0 0 8px ${style.glow}` : "none",
                 }}
               >
-                {player.name}
+                {player.playerId}
               </span>
               <span className="text-xs text-neutral-500 font-mono tracking-wider">
-                PLAYER #{player.id.toString().padStart(3, "0")}
+                RANK #{player.rank.toString().padStart(3, "0")}
               </span>
             </div>
           </div>
@@ -185,23 +164,26 @@ function PlayerCard({ player, rank }: { player: Player; rank: number }) {
   )
 }
 
+const GAME_ID = "quake"
+const API_URL = "http://localhost:8090"
+
 export default function Leaderboard() {
   const [players, setPlayers] = useState<Player[]>([])
 
+  const fetchLeaderboard = async () => {
+    try {
+      const res = await fetch(`${API_URL}/leaderboard/${GAME_ID}/top10`)
+      if (!res.ok) return
+      const data = await res.json()
+      setPlayers(data)
+    } catch (e) {
+      console.error("Failed to fetch leaderboard", e)
+    }
+  }
+
   useEffect(() => {
-    setPlayers(generatePlayers())
-
-    const interval = setInterval(() => {
-      setPlayers((prev) =>
-        prev
-          .map((p) => ({
-            ...p,
-            score: p.score + Math.floor(Math.random() * 500) - 100,
-          }))
-          .sort((a, b) => b.score - a.score)
-      )
-    }, 3000)
-
+    fetchLeaderboard()
+    const interval = setInterval(fetchLeaderboard, 3000)
     return () => clearInterval(interval)
   }, [])
 
@@ -276,7 +258,7 @@ export default function Leaderboard() {
           <div className="flex flex-col gap-3">
             <AnimatePresence mode="popLayout">
               {players.map((player, index) => (
-                <PlayerCard key={player.id} player={player} rank={index + 1} />
+                <PlayerCard key={player.playerId} player={player} rank={index + 1} />
               ))}
             </AnimatePresence>
           </div>
