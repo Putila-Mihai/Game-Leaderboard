@@ -127,9 +127,6 @@ function PlayerCard({ player, rank }: { player: Player; rank: number }) {
               >
                 {player.playerId}
               </span>
-              <span className="text-xs text-neutral-500 font-mono tracking-wider">
-                RANK #{player.rank.toString().padStart(3, "0")}
-              </span>
             </div>
           </div>
 
