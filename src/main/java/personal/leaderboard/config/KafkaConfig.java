@@ -12,7 +12,7 @@ public class KafkaConfig {
     public NewTopic rawScoresTopic() {
         return TopicBuilder.name("leaderboard.raw-scores")
                 .partitions(4)
-                .replicas(1)
+                .replicas(3)
                 .build();
     }
 }

@@ -2,18 +2,19 @@ package personal.leaderboard.service;
 
 
 import leaderboard.PlayerScoreEvent;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import personal.leaderboard.repository.LeaderboardRedisRepository;
 
+
 @Service
-@Slf4j
 public class ScoreConsumer {
 
     private final LeaderboardRedisRepository leaderboardRedisRepository;
+    private final Logger logger = LoggerFactory.getLogger(ScoreConsumer.class);
 
     public ScoreConsumer(final LeaderboardRedisRepository leaderboardRedisRepository) {
         this.leaderboardRedisRepository = leaderboardRedisRepository;
@@ -27,14 +28,16 @@ public class ScoreConsumer {
             final PlayerScoreEvent event,
             final Acknowledgment acknowledgment
     ) {
+        long start = System.currentTimeMillis();
         try {
             leaderboardRedisRepository.updateScore(
                     event.getGameId(),
                     event.getPlayerId(),
                     event.getScore());
             acknowledgment.acknowledge();
+            logger.info("Processed in {}ms", System.currentTimeMillis() - start);
         } catch (Exception e) {
-            log.error(
+            logger.error(
                     "Failed to process score event. gameId={} playerId={} score={} error={}",
                     event.getGameId(), event.getPlayerId(), event.getScore(), e.getMessage(), e
             );

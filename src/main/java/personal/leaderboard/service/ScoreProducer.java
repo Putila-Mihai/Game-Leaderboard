@@ -18,6 +18,7 @@ public class ScoreProducer {
     }
 
     public void publish(final PlayerScoreEvent event) {
-        kafkaTemplate.send(topic, event.getGameId(), event);
+        String key = event.getGameId() + ":" + event.getPlayerId();
+        kafkaTemplate.send(topic, key, event);
     }
 }

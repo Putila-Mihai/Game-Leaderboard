@@ -18,6 +18,7 @@ spring:
       auto.register.schemas: true
     listener:
       ack-mode: manual_immediate
+      concurrency: 4
     topics:
       raw-scores: leaderboard.raw-scores
   data:

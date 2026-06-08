@@ -27,3 +27,9 @@ docker compose up -d
 
 Redpanda Console: http://localhost:8080
 API: http://localhost:8090
+
+## reset redis state
+`docker exec -it redis redis-cli DEL leaderboard:quake`
+
+## Observations
+used k6 to test load on producer handled 1000req/s
