@@ -10,9 +10,8 @@ const PLAYERS = 50
 
 export const options = {
   stages: [
-    { duration: "30s", target: 200 },
-    { duration: "60s", target: 250 },
-    { duration: "30s", target: 0 },
+    { duration: "30s", target: 400 },
+    { duration: "30s", target: 700 },
   ],
   thresholds: {
     http_req_duration: ["p(95)<500"],

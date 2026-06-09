@@ -35,7 +35,6 @@ public class ScoreConsumer {
                     event.getPlayerId(),
                     event.getScore());
             acknowledgment.acknowledge();
-            logger.info("Processed in {}ms", System.currentTimeMillis() - start);
         } catch (Exception e) {
             logger.error(
                     "Failed to process score event. gameId={} playerId={} score={} error={}",

@@ -11,7 +11,7 @@ public class KafkaConfig {
     @Bean
     public NewTopic rawScoresTopic() {
         return TopicBuilder.name("leaderboard.raw-scores")
-                .partitions(4)
+                .partitions(8)
                 .replicas(3)
                 .build();
     }
