@@ -20,27 +20,48 @@ public class ScoreConsumer {
         this.leaderboardRedisRepository = leaderboardRedisRepository;
     }
 
+//    @KafkaListener(
+//            topics = "leaderboard.raw-scores",
+//            groupId = "leaderboard-service"
+//    )
+//    public void consume(
+//            final PlayerScoreEvent event,
+//            final Acknowledgment acknowledgment
+//    ) {
+//        long start = System.currentTimeMillis();
+//        try {
+//            leaderboardRedisRepository.updateScore(
+//                    event.getGameId(),
+//                    event.getPlayerId(),
+//                    event.getScore());
+//            acknowledgment.acknowledge();
+//        } catch (Exception e) {
+//            logger.error(
+//                    "Failed to process score event. gameId={} playerId={} score={} error={}",
+//                    event.getGameId(), event.getPlayerId(), event.getScore(), e.getMessage(), e
+//            );
+//            throw e;
+//        }
+//    }
+
     @KafkaListener(
-            topics = "leaderboard.raw-scores",
-            groupId = "leaderboard-service"
+            topics = "leaderboard.computed-scores",
+            groupId = "leaderboard-computed-service"
     )
-    public void consume(
-            final PlayerScoreEvent event,
-            final Acknowledgment acknowledgment
-    ) {
-        long start = System.currentTimeMillis();
+    public void consume(final PlayerScoreEvent event,final Acknowledgment ack){
         try {
-            leaderboardRedisRepository.updateScore(
+            leaderboardRedisRepository.add(
                     event.getGameId(),
                     event.getPlayerId(),
-                    event.getScore());
-            acknowledgment.acknowledge();
-        } catch (Exception e) {
-            logger.error(
-                    "Failed to process score event. gameId={} playerId={} score={} error={}",
-                    event.getGameId(), event.getPlayerId(), event.getScore(), e.getMessage(), e
+                    event.getScore()
             );
-            throw e;
+            ack.acknowledge();
         }
+            catch (Exception e) {
+                logger.error("Failed to process computed score event. gameId={} playerId={} score={}",
+                        event.getGameId(), event.getPlayerId(), event.getScore(), e);
+                throw e;
+            }
     }
+
 }

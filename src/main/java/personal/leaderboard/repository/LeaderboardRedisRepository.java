@@ -47,4 +47,10 @@ public class LeaderboardRedisRepository {
         }
         return leaderboard;
     }
+
+    public void add(String gameId, String playerId, double score) {
+        final var key = KEY_PREFIX + gameId;
+        redisTemplate.opsForZSet().add(key, playerId, score);
+    }
+
 }

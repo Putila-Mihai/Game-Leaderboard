@@ -6,12 +6,16 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: 1
+      batch-size: 65536
+      linger-ms: 5
     consumer:
       group-id: leaderboard-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       enable-auto-commit: false
+      max-poll-records: 500
     properties:
       schema.registry.url: http://localhost:18081
       specific.avro.reader: true
@@ -21,6 +25,16 @@ spring:
       concurrency: 8
     topics:
       raw-scores: leaderboard.raw-scores
+    streams:
+      application-id: leaderboard-streams
+      bootstrap-servers: localhost:19092
+      properties:
+        schema.registry.url: http://localhost:18081
+        specific.avro.reader: true
+        replication.factor: 1
+        num.stream.threads: 4
+        commit.interval.ms: 100
+        cache.max.bytes.buffering: 10485760
   data:
     redis:
       host: localhost

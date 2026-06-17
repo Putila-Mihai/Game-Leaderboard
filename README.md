@@ -50,6 +50,16 @@ Matching consumer thread count to partition count is the key scaling lever.
 Doubling to 8 partitions + 8 threads reduced peak lag by 99.5% vs the baseline,
 to just 524 messages at identical throughput.
 
+**Added kstreams**
+
+Increased lag to 64645 locally , but probably on production where kstreams they scale much better. 
+
+different config => 1,630 max lag
+
+- linger.ms=5 + batch-size=65536 — producer batching
+- cache.max.bytes.buffering=10MB — fewer RocksDB flushes in Kafka Streams
+- commit.interval.ms=100 — consistent forward progress instead of 30s bursts
+
 ## Chaos scenarios
 
 > To be documented — kill consumer mid load test, Redis down scenario, poison
