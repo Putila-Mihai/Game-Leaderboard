@@ -1,3 +1,9 @@
+<img width="1358" height="906" alt="Screenshot 2026-06-18 at 00 36 36" src="https://github.com/user-attachments/assets/eb24d502-6179-47f1-9cb6-3535c9fa2da2" />
+
+## I created this small project to test and learn more Kafka, and also to create a future playground for testing things
+
+**FE Part is AI-generated**
+
 ## Concepts explored
 - Manual offset commit and at-least-once delivery guarantees
 - Partitioning by `gameId` caused a partition to take all events. Fixed with composite key `gameId:playerId` for balanced
@@ -7,8 +13,10 @@
 - Avro schema evolution — backward compatibility requires new fields to have
   defaults. Breaking changes require topic replay in dev or migration strategy
   in production
-- Redis sorted sets — ZADD/ZREVRANGE for O(log N) leaderboard reads
-- 
+- Redis sorted sets
+- Kstreams
+- SSE
+
 ## Running locally
 ```bash
 docker compose up -d
@@ -60,7 +68,7 @@ different config => 1,630 max lag
 - cache.max.bytes.buffering=10MB — fewer RocksDB flushes in Kafka Streams
 - commit.interval.ms=100 — consistent forward progress instead of 30s bursts
 
-## Chaos scenarios
+**Added SSE for real time App view** 
 
-> To be documented — kill consumer mid load test, Redis down scenario, poison
-> event DLT routing
+## TODO:
+> kill consumer mid load test, Redis down scenario, poison event

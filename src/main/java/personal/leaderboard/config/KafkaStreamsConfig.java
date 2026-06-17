@@ -18,7 +18,6 @@ import java.util.Map;
 
 @Configuration
 @EnableKafkaStreams
-@DependsOn({"rawScoresTopic", "computedScoresTopic"})
 public class KafkaStreamsConfig {
 
     private static final String RAW_SCORES_TOPIC = "leaderboard.raw-scores";
