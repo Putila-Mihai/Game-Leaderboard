@@ -26,7 +26,7 @@ spring:
     topics:
       raw-scores: leaderboard.raw-scores
     streams:
-      application-id: leaderboard-streams
+      application-id: leaderboard-streams-v2
       bootstrap-servers: localhost:19092
       properties:
         schema.registry.url: http://localhost:18081

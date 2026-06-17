@@ -4,9 +4,11 @@ package personal.leaderboard.service;
 import leaderboard.PlayerScoreEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
+import personal.leaderboard.common.LeaderboardUpdatedEvent;
 import personal.leaderboard.repository.LeaderboardRedisRepository;
 
 
@@ -15,9 +17,11 @@ public class ScoreConsumer {
 
     private final LeaderboardRedisRepository leaderboardRedisRepository;
     private final Logger logger = LoggerFactory.getLogger(ScoreConsumer.class);
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ScoreConsumer(final LeaderboardRedisRepository leaderboardRedisRepository) {
+    public ScoreConsumer(final LeaderboardRedisRepository leaderboardRedisRepository,final ApplicationEventPublisher eventPublisher) {
         this.leaderboardRedisRepository = leaderboardRedisRepository;
+        this.eventPublisher = eventPublisher;
     }
 
 //    @KafkaListener(
@@ -56,6 +60,7 @@ public class ScoreConsumer {
                     event.getScore()
             );
             ack.acknowledge();
+            eventPublisher.publishEvent(new LeaderboardUpdatedEvent(event.getGameId()));
         }
             catch (Exception e) {
                 logger.error("Failed to process computed score event. gameId={} playerId={} score={}",

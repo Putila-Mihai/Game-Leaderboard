@@ -167,22 +167,27 @@ const API_URL = "http://localhost:8090"
 export default function Leaderboard() {
   const [players, setPlayers] = useState<Player[]>([])
 
-  const fetchLeaderboard = async () => {
-    try {
-      const res = await fetch(`${API_URL}/leaderboard/${GAME_ID}/top10`)
-      if (!res.ok) return
-      const data = await res.json()
-      setPlayers(data)
-    } catch (e) {
-      console.error("Failed to fetch leaderboard", e)
-    }
-  }
+    useEffect(() => {
+      // connect to SSE stream
+      const eventSource = new EventSource(
+        `${API_URL}/leaderboard/${GAME_ID}/stream`
+      )
 
-  useEffect(() => {
-    fetchLeaderboard()
-    const interval = setInterval(fetchLeaderboard, 3000)
-    return () => clearInterval(interval)
-  }, [])
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        setPlayers(data)
+      }
+
+      eventSource.onerror = (error) => {
+        console.error("SSE error:", error)
+        eventSource.close()
+      }
+
+      // cleanup on unmount
+      return () => {
+        eventSource.close()
+      }
+    }, [])
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
